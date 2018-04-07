@@ -41,44 +41,27 @@ import copy
 import sys
 
 
-class Solver:
-    def __init__(self):
-        pass
-
-    def bfs(self):
-        pass
-
-    def dfs(self):
-        pass
-
-    def ast(self):
-        pass
-
-
 class Node:
-    def __init__(self, initialConf):
-        if initialConf is not None:
+    def __init__(self, board_configuration):
+        if board_configuration is not None:
             self.board = [[0] * 3 for i in xrange(3)]
             for i in xrange(3):
-                self.board[i] = initialConf[0 + i * 3:3 * (i + 1)]
+                self.board[i] = board_configuration[0 + i * 3:3 * (i + 1)]
                 for row in range(0, 3):
                     for col in range(0, 3):
                         if self.board[row][col] == 0:
                             self.x = row
                             self.y = col
                             break
-            tmpColMoves = []
-            tmpRowMoves = []
+            self.allowedMoves = []
             if self.x > 0:
-                tmpRowMoves.append("U")
+                self.allowedMoves.append("U")
             if self.x < 2:
-                tmpRowMoves.append("D")
+                self.allowedMoves.append("D")
             if self.y > 0:
-                tmpColMoves.append("L")
+                self.allowedMoves.append("L")
             if self.y < 2:
-                tmpColMoves.append("R")
-
-            self.allowedMoves = tmpColMoves + tmpRowMoves
+                self.allowedMoves.append("R")
 
     def printBoard(self):
         print self.board
@@ -134,8 +117,56 @@ class Node:
 
 
 class State:
-    def __init__(self):
+    def __init__(self, initial_conf):
+        self.id = 0
+        self.rootState = Node(initial_conf)
+        self.currentState = self.rootState
+        self.childState = None
+        self.parentState = None
+        self.action = None  # Keep the action that led from parent to current state
+        self.added = False
+
+
+class Solver:
+    def __init__(self, initialState, method):
+        self.state = initialState
+        self.method = method
+        self.goalState = Node([0, 1, 2, 3, 4, 5, 6, 7, 8])
+        self.frontier = Frontier()
+        self.checkId = 0
+
+    def solve(self):  # Pass the argument here as a string: bfs, dfs, ast
         pass
+
+    def bfs(self):
+        self.frontier.frontier[self.state.id] = self.state
+        self.state.added = True
+
+        while not self.frontier.isEmpty():
+            pass
+
+    def dfs(self):
+        pass
+
+    def ast(self):
+        pass
+
+    def goalTest(self):
+        return self.goalState == self.state.currentState
+
+
+class Frontier:
+    def __init__(self):
+        self.frontier = dict()
+
+    def enqueue(self):
+        pass
+
+    def dequeue(self):
+        pass
+
+    def isEmpty(self):
+        return bool(self.frontier)
 
 
 if __name__ == '__main__':
@@ -157,6 +188,7 @@ if __name__ == '__main__':
     ob2 = ob1.moveLeft()
     ob2.printBoard()
     ob2.printZero()
-    print(ob1 != ob2)
+    print(ob1 != ob1)
     print ob1.getAllowedMoves()
     print ob2.getAllowedMoves()
+    ob1.printBoard()
