@@ -54,12 +54,12 @@ class Node:
                             self.y = col
                             break
             self.allowedMoves = []
+            if self.y > 0:
+                self.allowedMoves.append("L")
             if self.x > 0:
                 self.allowedMoves.append("U")
             if self.x < 2:
                 self.allowedMoves.append("D")
-            if self.y > 0:
-                self.allowedMoves.append("L")
             if self.y < 2:
                 self.allowedMoves.append("R")
 
@@ -116,7 +116,7 @@ class Node:
         return not self == other
 
 
-class State:
+class State: # TODO Check the type of initial_conf for a Node object and proceed accordingly
     def __init__(self, initial_conf):
         self.id = 0
         self.rootState = Node(initial_conf)
@@ -139,11 +139,19 @@ class Solver:
         pass
 
     def bfs(self):
-        self.frontier.frontier[self.state.id] = self.state
-        self.state.added = True
+        self.frontier.enqueue(self.state)
 
         while not self.frontier.isEmpty():
-            pass
+            self.frontier.frontier[self.checkId].added = True
+            self.state = self.frontier.dequeue(self.checkId)
+
+            if self.goalTest(self.state):
+                return True
+
+            allowedMoves = self.state.currentState.getAllowedMoves()
+
+            for index, move in enumerate(allowedMoves):
+                pass
 
     def dfs(self):
         pass
@@ -151,19 +159,34 @@ class Solver:
     def ast(self):
         pass
 
-    def goalTest(self):
-        return self.goalState == self.state.currentState
+    def goalTest(self, s):
+        return self.goalState == s.currentState
+
+    def moveState(self, tmpNode, m):
+        if m == "L":
+            return tmpNode.moveLeft
+
+        if m == "U":
+            return tmpNode.moveUp
+
+        if m == "D":
+            return tmpNode.moveDown
+
+        if m == "R":
+            return tmpNode.moveRight
+
+        return None
 
 
 class Frontier:
     def __init__(self):
         self.frontier = dict()
 
-    def enqueue(self):
-        pass
+    def enqueue(self, state):
+        self.frontier[state.id] = state
 
-    def dequeue(self):
-        pass
+    def dequeue(self, inTurnId):
+        return self.frontier[inTurnId]
 
     def isEmpty(self):
         return bool(self.frontier)
